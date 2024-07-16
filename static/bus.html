@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SSE Example - Event Bus</title>
+  </head>
+  <body>
+    <h1>SSE Example - Event Bus</h1>
+    <button onclick="triggerEvent()">Publish Event</button>
+    <hr />
+    <a href="index.html">Redis</a>
+    <h2 id="count">0</h2>
+    <script>
+      const eventSource = new EventSource("http://localhost:8080/bus-events");
+      let count = 0;
+
+      eventSource.addEventListener("test-event", (event) => {
+        console.log(JSON.parse(event.data));
+        const countContainer = document.getElementById("count");
+        count++;
+        countContainer.innerHTML = count;
+      });
+
+      window.addEventListener("beforeunload", function () {
+        eventSource.close();
+      });
+
+      const triggerEvent = () => {
+        fetch("/bus-publish");
+      };
+    </script>
+  </body>
+</html>
